@@ -35,4 +35,6 @@ def start_bot(host, login, password, sid):
 if __name__ == "__main__":
 
     query_cfg = parse_cfg("ts3bot_query.cfg")
+    sql_cfg = parse_cfg("ts3bot_sql.cfg")
+    
     start_bot(query_cfg[0], query_cfg[1], query_cfg[2], query_cfg[3])
