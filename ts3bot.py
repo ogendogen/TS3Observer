@@ -37,7 +37,7 @@ def start_bot(host, login, password, sid, sql_manager, groupids):
                     if event[0]["reasonid"] == "0":
                         print("Client '{}' connected.".format(event[0]["client_nickname"]))
                         name = event[0]["client_nickname"]
-                        clid = int(event[0]["clid"])
+                        clid = event[0]["clid"]
                         client_groups = event[0]["client_servergroups"].split(",")
                         uid = event[0]["client_unique_identifier"]
 
