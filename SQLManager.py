@@ -3,7 +3,7 @@ import pymysql
 class SQLManager(object):
 
     def __init__(self, host, user, password, dbname):
-        db = pymysql.connect(host, user, password, dbname)
+        db = pymysql.connect(host, user, password, dbname, charset="utf8mb4", cursorclass=pymysql.cursors.DictCursor)
         self.__cursor = db.cursor()
 
     def save_admin_login(self, name, uid, timestamp, clid = None):
