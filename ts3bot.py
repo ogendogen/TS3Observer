@@ -8,9 +8,13 @@ def parse_cfg(fileName):
         lines = file.read().split("\n")
         lines.remove("")
         file.close()
+
+        if len(lines) >= 5 and "," in lines[4]:
+            lines[4] = lines[4].split(",")
+
         return lines
 
-def start_bot(host, login, password, sid, sql_manager):
+def start_bot(host, login, password, sid, sql_manager, groupids):
     with ts3.query.TS3Connection(host) as ts3conn:
             ts3conn.login(
                     client_login_name=login,
@@ -41,4 +45,4 @@ if __name__ == "__main__":
 
     query_cfg = parse_cfg("ts3bot_query.cfg")
     print("Bot launched")
-    start_bot(query_cfg[0], query_cfg[1], query_cfg[2], query_cfg[3], sql_manager)
+    start_bot(query_cfg[0], query_cfg[1], query_cfg[2], query_cfg[3], sql_manager, query_cfg[4])
