@@ -8,7 +8,7 @@ class SQLManager(object):
 
     def add_new_admin(self, admin_name, admin_uid, admin_clid):
         query = "INSERT INTO admin SET admin_name = %s, admin_uid = %s, admin_clid = %d"
-        self.__cursor.execute(query, (admin_name, admin_uid))
+        self.__cursor.execute(query, (admin_name, admin_uid, admin_clid))
         return self.__cursor.lastrowid
 
     def save_admin_login(self, admin_id, timestamp):
