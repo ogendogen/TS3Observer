@@ -7,13 +7,13 @@ class SQLManager(object):
         self.__cursor = db.cursor()
 
     def save_admin_login(self, name, uid, timestamp, clid = None):
-        return None
+        raise NotImplementedError
 
     def save_admin_logout(self, clid, timestamp):
-        return None
+        raise NotImplementedError
 
     def get_admins(self):
-        return None
+        raise NotImplementedError
 
     def __save_admin_clid(self, name, clid):
-        return None
+        raise NotImplementedError
