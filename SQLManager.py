@@ -14,7 +14,8 @@ class SQLManager(object):
         self.__cursor.execute(query % admin_id % timestamp)
 
     def save_admin_logout(self, clid, timestamp):
-        raise NotImplementedError
+        query = "UPDATE activity SET activity_endtime = ? WHERE activity_endtime = null AND activity_adminid = (SELECT admin_id FROM admin WHERE clid = ?)"
+        self.__cursor.execute(query % timestamp, clid)
 
     def get_admins(self):
         query = "SELECT admin_name, admin_uid FROM admin"
