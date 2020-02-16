@@ -13,7 +13,9 @@ class SQLManager(object):
         raise NotImplementedError
 
     def get_admins(self):
-        raise NotImplementedError
+        query = "SELECT admin_name, admin_uid FROM admin"
+        self.__cursor.execute(query)
+        return self.__cursor.fetchall()
 
     def __save_admin_clid(self, name, clid):
         raise NotImplementedError
