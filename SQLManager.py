@@ -22,4 +22,5 @@ class SQLManager(object):
         return self.__cursor.fetchall()
 
     def __save_admin_clid(self, admin_id, clid):
-        raise NotImplementedError
+        query = "UPDATE admin SET admin_clid = ? WHERE admin_id = ?"
+        self.__cursor.execute(query % clid % admin_id)
