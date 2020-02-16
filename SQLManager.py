@@ -22,4 +22,4 @@ class SQLManager(object):
     def get_admins(self):
         query = "SELECT admin_id, admin_name, admin_uid, admin_clid FROM admin"
         self.__cursor.execute(query)
-        return self.__cursor.fetchall()
+        return list(self.__cursor.fetchall())
