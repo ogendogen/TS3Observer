@@ -4,6 +4,7 @@ class SQLManager(object):
 
     def __init__(self, host, user, password, dbname):
         self.__db = pymysql.connect(host, user, password, dbname, charset="utf8mb4", cursorclass=pymysql.cursors.DictCursor)
+        self.__db.ping(reconnect=True)
 
     def add_new_admin(self, admin_name, admin_uid, admin_clid):
         query = "INSERT INTO admin SET admin_name = %s, admin_uid = %s, admin_clid = %s"
