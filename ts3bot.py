@@ -34,6 +34,7 @@ def start_bot(host, login, password, sid, sql_manager, groupids):
             admins = sql_manager.get_admins()
 
             while True:
+                    ts3conn.send_keepalive()
                     event = ts3conn.wait_for_event()
 
                     # Client connected
