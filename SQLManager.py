@@ -22,6 +22,11 @@ class SQLManager(object):
         self.__cursor.execute(query, (timestamp, admin_id))
         self.__commit()
 
+    def report_status(self):
+        query = "UPDATE status SET last_report = UNIX_TIMESTAMP()"
+        self.__cursor.execute(query)
+        self.__commit()
+
     def get_admins(self):
         query = "SELECT admin_id, admin_name, admin_uid, admin_clid FROM admin"
         self.__cursor.execute(query)
