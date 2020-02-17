@@ -5,6 +5,7 @@ from SQLManager import SQLManager
 from datetime import datetime
 import sys
 import traceback
+import threading
 
 def parse_cfg(fileName):
     with open(fileName) as file:
@@ -20,6 +21,9 @@ def parse_cfg(fileName):
 def intersection(a, b):
     return list(set(a) & set(b))
 
+def report_status():
+    sql_manager.report_status()
+
 def start_bot(host, login, password, sid, sql_manager, groupids):
     with ts3.query.TS3Connection(host) as ts3conn:
             ts3conn.login(
@@ -32,6 +36,9 @@ def start_bot(host, login, password, sid, sql_manager, groupids):
             ts3conn.servernotifyregister(event="server")
 
             admins = sql_manager.get_admins()
+
+            report_status()
+            threading.Timer(300.0, report_status).start()
 
             while True:
                     ts3conn.send_keepalive()
