@@ -58,6 +58,7 @@ def start_bot(host, login, password, sid, sql_manager, groupids):
                     elif event[0]["reasonid"] == "8":
                         clid = int(event[0]["clid"])
                         admin_id = [admin["admin_id"] for admin in admins if admin["admin_clid"] == clid] # Check if it's admin
+                        print("Client '{}' disconnected.".format(event[0]["client_nickname"]))
                         if len(admin_id) > 0: # If admin then save
                             sql_manager.save_admin_logout(admin_id, int(time.time()))
 
