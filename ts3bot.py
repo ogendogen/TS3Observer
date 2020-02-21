@@ -7,8 +7,8 @@ import sys
 import traceback
 import threading
 
-def parse_cfg(fileName):
-    with open(fileName) as file:
+def parse_cfg(file_name):
+    with open(file_name) as file:
         lines = file.read().split("\n")
         lines.remove("")
         file.close()
@@ -33,7 +33,7 @@ def update_admin_clid(admins, admin_id, clid):
         counter = counter + 1
     return admins
 
-def start_bot(host, login, password, sid, sql_manager, groupids):
+def start_bot(host, login, password, sid, sql_manager, group_ids):
     with ts3.query.TS3Connection(host) as ts3conn:
             ts3conn.login(
                     client_login_name=login,
@@ -61,7 +61,7 @@ def start_bot(host, login, password, sid, sql_manager, groupids):
                         uid = event[0]["client_unique_identifier"]
                         print(f"Client {name} connected")
 
-                        if len(intersection(groupids, client_groups)) > 0: # If user is in any admin group
+                        if len(intersection(group_ids, client_groups)) > 0: # If user is in any admin group
                             admin_id = [admin["admin_id"] for admin in admins if admin["admin_uid"] == uid] # Try to get admin id from admins
                             if len(admin_id) == 0: # Admin not registered
                                 admin_id = sql_manager.add_new_admin(name, uid, clid) # Register new admin
