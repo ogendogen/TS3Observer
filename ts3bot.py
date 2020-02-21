@@ -2,6 +2,10 @@ import time
 import ts3
 import io
 from SQLManager import SQLManager
+from datetime import datetime
+import sys
+import traceback
+import threading
 
 def parse_cfg(fileName):
     with open(fileName) as file:
@@ -17,6 +21,9 @@ def parse_cfg(fileName):
 def intersection(a, b):
     return list(set(a) & set(b))
 
+def report_status():
+    sql_manager.report_status()
+
 def start_bot(host, login, password, sid, sql_manager, groupids):
     with ts3.query.TS3Connection(host) as ts3conn:
             ts3conn.login(
@@ -30,7 +37,11 @@ def start_bot(host, login, password, sid, sql_manager, groupids):
 
             admins = sql_manager.get_admins()
 
+            report_status()
+            threading.Timer(300.0, report_status).start()
+
             while True:
+                    ts3conn.send_keepalive()
                     event = ts3conn.wait_for_event()
 
                     # Client connected
@@ -59,11 +70,16 @@ def start_bot(host, login, password, sid, sql_manager, groupids):
                             sql_manager.save_admin_logout(admin_id, int(time.time()))
 
 if __name__ == "__main__":
+    try:
+        sql_cfg = parse_cfg("ts3bot_sql.cfg")
+        sql_manager = SQLManager(sql_cfg[0], sql_cfg[1], sql_cfg[2], sql_cfg[3])
+        print("SQL connected")
 
-    sql_cfg = parse_cfg("ts3bot_sql.cfg")
-    sql_manager = SQLManager(sql_cfg[0], sql_cfg[1], sql_cfg[2], sql_cfg[3])
-    print("SQL connected")
+        query_cfg = parse_cfg("ts3bot_query.cfg")
+        print("Bot launched")
+        start_bot(query_cfg[0], query_cfg[1], query_cfg[2], query_cfg[3], sql_manager, query_cfg[4])
 
-    query_cfg = parse_cfg("ts3bot_query.cfg")
-    print("Bot launched")
-    start_bot(query_cfg[0], query_cfg[1], query_cfg[2], query_cfg[3], sql_manager, query_cfg[4])
+    except Exception as e:
+        with open("logs.txt", "a") as file:
+            print("Exception occured. Stopping")
+            file.write("L " + str(datetime.now()) + " " + str(e) + " " + traceback.format_exc() + "\n")
