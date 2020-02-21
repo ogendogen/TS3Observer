@@ -32,6 +32,10 @@ class SQLManager(object):
     def fill_all_missing_disconnected_time(self):
         query = "UPDATE activity SET activity_endtime = UNIX_TIMESTAMP() WHERE activity_endtime IS NULL"
         return self.__exec(query)
+    
+    def update_admin_clid(self, admin_id, admin_clid):
+        query = "UPDATE admin SET admin_clid = %s WHERE admin_id = %s"
+        return self.__exec(query, (admin_clid, admin_id))
 
     def __exec(self, query, *args):
         db = pymysql.connect(self.__host, self.__user, self.__password, self.__dbname, charset="utf8mb4", cursorclass=pymysql.cursors.DictCursor)
