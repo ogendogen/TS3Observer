@@ -24,6 +24,15 @@ def intersection(a, b):
 def report_status():
     sql_manager.report_status()
 
+def update_admin_clid(admins, admin_id, clid):
+    counter = 0
+    for admin in admins:
+        if admin["admin_id"] == admin_id:
+            admin["admin_clid"] = clid
+            break
+        counter = counter + 1
+    return admins
+
 def start_bot(host, login, password, sid, sql_manager, groupids):
     with ts3.query.TS3Connection(host) as ts3conn:
             ts3conn.login(
@@ -59,6 +68,8 @@ def start_bot(host, login, password, sid, sql_manager, groupids):
                                 admins.append({"admin_id": admin_id, "admin_name": name, "admin_uid": uid, "admin_clid": clid})
                             else:
                                 admin_id = admin_id[0] # Admin already registered
+                                admins = update_admin_clid(admins, admin_id, clid)
+                                sql_manager.update_admin_clid(admin_id, clid)
 
                             sql_manager.save_admin_login(admin_id, int(time.time()))
 
