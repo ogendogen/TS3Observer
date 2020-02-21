@@ -73,7 +73,7 @@ if __name__ == "__main__":
     try:
         sql_cfg = parse_cfg("ts3bot_sql.cfg")
         sql_manager = SQLManager(sql_cfg[0], sql_cfg[1], sql_cfg[2], sql_cfg[3])
-        print("SQL connected")
+        print("SQL manager created")
 
         query_cfg = parse_cfg("ts3bot_query.cfg")
         print("Bot launched")
