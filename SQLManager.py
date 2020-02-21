@@ -41,12 +41,15 @@ class SQLManager(object):
         cursor.execute(query, *args)
 
         result = self.__commit(db)
+        ret_value = None
         if result:
             if query.startswith("SELECT"):
-                return list(cursor.fetchall())
+                ret_value = list(cursor.fetchall())
             elif query.startswith("INSERT"):
-                return cursor.lastrowid
+                ret_value = cursor.lastrowid
+
         db.close()
+        return ret_value
 
     def __commit(self, db):
         try:
