@@ -46,11 +46,11 @@ def start_bot(host, login, password, sid, sql_manager, groupids):
 
                     # Client connected
                     if event[0]["reasonid"] == "0":
-                        print("Client '{}' connected.".format(event[0]["client_nickname"]))
                         name = event[0]["client_nickname"]
                         clid = int(event[0]["clid"])
                         client_groups = event[0]["client_servergroups"].split(",")
                         uid = event[0]["client_unique_identifier"]
+                        print(f"Client {name} connected")
 
                         if len(intersection(groupids, client_groups)) > 0: # If user is in any admin group
                             admin_id = [admin["admin_id"] for admin in admins if admin["admin_uid"] == uid] # Try to get admin id from admins
