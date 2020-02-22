@@ -23,6 +23,7 @@ def intersection(a, b):
 
 def report_status():
     sql_manager.report_status()
+    threading.Timer(300.0, report_status).start()
 
 def update_admin_clid(admins, admin_id, clid):
     counter = 0
@@ -47,7 +48,6 @@ def start_bot(host, login, password, sid, sql_manager, group_ids):
             admins = sql_manager.get_admins()
 
             report_status()
-            threading.Timer(300.0, report_status).start()
 
             while True:
                     ts3conn.send_keepalive()
