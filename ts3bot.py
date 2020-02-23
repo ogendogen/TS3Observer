@@ -38,6 +38,8 @@ def keep_bot_alive():
             client_login_name = login,
             client_login_password = password
         )
+        ts3conn.use(sid=sid)
+        ts3conn.servernotifyregister(event="server")
 
     ts3conn.send_keepalive()
     threading.Timer(60.0, keep_bot_alive).start()
