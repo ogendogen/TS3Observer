@@ -7,8 +7,12 @@ import sys
 import traceback
 import threading
 
-# Global TS3 handler object
-ts3conn = None
+# Global TS3 handler object and connection details
+global ts3conn
+global host
+global login
+global password
+global sid
 
 def parse_cfg(file_name):
     with open(file_name) as file:
@@ -29,7 +33,12 @@ def report_status():
     threading.Timer(300.0, report_status).start()
 
 def keep_bot_alive():
-    global ts3conn
+    if not ts3conn.is_connected():
+        ts3conn.login(
+            client_login_name = login,
+            client_login_password = password
+        )
+
     ts3conn.send_keepalive()
     threading.Timer(60.0, keep_bot_alive).start()
 
@@ -40,12 +49,16 @@ def update_admin_clid(admins, admin_id, clid):
             break
     return admins
 
-def start_bot(host, login, password, sid, sql_manager, group_ids):
+def start_bot(sql_manager, group_ids):
     global ts3conn
+    global host
+    global login
+    global password
+    global sid
     ts3conn = ts3.query.TS3Connection(host)
     ts3conn.login(
-            client_login_name=login,
-            client_login_password=password
+            client_login_name = login,
+            client_login_password = password
     )
     ts3conn.use(sid=sid)
 
@@ -95,7 +108,13 @@ if __name__ == "__main__":
 
         query_cfg = parse_cfg("ts3bot_query.cfg")
         print("Bot launched")
-        start_bot(query_cfg[0], query_cfg[1], query_cfg[2], query_cfg[3], sql_manager, query_cfg[4])
+        
+        host = query_cfg[0]
+        login = query_cfg[1]
+        password = query_cfg[2]
+        sid = query_cfg[3]
+
+        start_bot(sql_manager, query_cfg[4])
 
     except Exception as e:
         with open("logs.txt", "a") as file:
