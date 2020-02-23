@@ -4,8 +4,20 @@ from logging.handlers import TimedRotatingFileHandler
 class Logger(object):
 
     def __init__(self):
-        self.info_logger = self.__create_info_logger()
-        self.error_logger = self.__create_error_logger()
+        self.__info_logger = self.__create_info_logger()
+        self.__error_logger = self.__create_error_logger()
+
+    def log_info(self, message):
+        self.__info_logger.info(message)
+
+    def log_warning(self, message):
+        self.__info_logger.warning(message)
+
+    def log_error(self, message):
+        self.__error_logger.error(message)
+
+    def log_critical(self, message):
+        self.__error_logger.critical(message)
 
     def __create_info_logger(self):
         
