@@ -3,6 +3,7 @@ import ts3
 import io
 from SQLManager import SQLManager
 from datetime import datetime
+from Logger import Logger
 import sys
 import traceback
 import threading
@@ -13,6 +14,7 @@ global host
 global login
 global password
 global sid
+global logger
 
 def parse_cfg(file_name):
     with open(file_name) as file:
@@ -104,6 +106,9 @@ def start_bot(sql_manager, group_ids):
 
 if __name__ == "__main__":
     try:
+        logger = Logger()
+        print("Logger created")
+
         sql_cfg = parse_cfg("ts3bot_sql.cfg")
         sql_manager = SQLManager(sql_cfg[0], sql_cfg[1], sql_cfg[2], sql_cfg[3])
         print("SQL manager created")
