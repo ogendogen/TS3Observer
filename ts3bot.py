@@ -34,12 +34,10 @@ def keep_bot_alive():
     threading.Timer(60.0, keep_bot_alive).start()
 
 def update_admin_clid(admins, admin_id, clid):
-    counter = 0
     for admin in admins:
         if admin["admin_id"] == admin_id:
             admin["admin_clid"] = clid
             break
-        counter = counter + 1
     return admins
 
 def start_bot(host, login, password, sid, sql_manager, group_ids):
