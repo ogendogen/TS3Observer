@@ -28,7 +28,7 @@ class Logger(object):
         handler.setFormatter(formatter)
 
         logger = logging.getLogger("info_logger")
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.WARNING)
         logger.addHandler(handler)
 
         return logger
