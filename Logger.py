@@ -41,7 +41,7 @@ class Logger(object):
         handler.suffix = "%Y%m%d"
         handler.setFormatter(formatter)
 
-        logger = logging.getLogger("info_logger")
+        logger = logging.getLogger("error_logger")
         logger.setLevel(logging.ERROR)
         logger.addHandler(handler)
 
