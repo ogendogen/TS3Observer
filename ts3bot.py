@@ -36,6 +36,7 @@ def report_status():
 
 def keep_bot_alive():
     if not ts3conn.is_connected():
+        ts3conn.open(host)
         ts3conn.login(
             client_login_name = login,
             client_login_password = password
