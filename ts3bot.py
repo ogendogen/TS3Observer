@@ -96,7 +96,7 @@ def start_bot(sql_manager, group_ids):
                 logger.log_info(clientinfo)
 
                 if len(intersection(group_ids, client_groups)) > 0: # If user is in any admin group
-                    admin_id = [admin["admin_id"] for admin in admins if admin["admin_uid"] == uid] # Try to get admin id from admins
+                    admin_id = [admin["admin_id"] for admin in admins if admin["admin_name"] == name] # Try to get admin id from admins
                     if len(admin_id) == 0: # Admin not registered
                         admin_id = sql_manager.add_new_admin(name, uid, clid) # Register new admin
                         admins.append({"admin_id": admin_id, "admin_name": name, "admin_uid": uid, "admin_clid": clid})
