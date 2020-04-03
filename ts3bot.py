@@ -7,6 +7,7 @@ from Logger import Logger
 import sys
 import traceback
 import threading
+import os
 
 # Global TS3 handler object and connection details
 global ts3conn
@@ -30,13 +31,21 @@ def parse_cfg(file_name):
 def intersection(a, b):
     return list(set(a) & set(b))
 
+def killSelf():
+    if os.name == "nt":
+        os.system("taskkill /im py.exe /f")
+    elif os.name == "posix":
+         os.system("pkill python3.8")
+
 def report_status():
     try:
         sql_manager.report_status()
         logger.log_info("Activity reported to database")
         threading.Timer(300.0, report_status).start()
     except Exception as e:
+        print("Exception in report_status occured")
         logger.log_critical(str(e) + traceback.format_exc())
+        killSelf()
 
 def keep_bot_alive():
     try:
@@ -52,7 +61,9 @@ def keep_bot_alive():
         ts3conn.send_keepalive()
         threading.Timer(60.0, keep_bot_alive).start()
     except Exception as e:
+        print("Exception in keep_bot_alive occured")
         logger.log_critical(str(e) + " " + traceback.format_exc())
+        killSelf()
 
 def update_admin_clid(admins, admin_id, clid):
     for admin in admins:
@@ -134,5 +145,6 @@ if __name__ == "__main__":
         start_bot(sql_manager, query_cfg[4])
 
     except Exception as e:
-        print("Exception occured. Stopping")
+        print("Exception occured. Stopping " + str(e))
         logger.log_critical(str(e) + " " + traceback.format_exc())
+        killSelf()
