@@ -7,7 +7,7 @@ class SQLManager(object):
         self.__user = user
         self.__password = password
         self.__dbname = dbname
-        self.fill_all_missing_disconnected_time()
+        self.__fill_all_missing_disconnected_time()
 
     def add_new_admin(self, admin_name, admin_uid, admin_clid):
         query = "INSERT INTO admin SET admin_name = %s, admin_uid = %s, admin_clid = %s"
@@ -29,7 +29,7 @@ class SQLManager(object):
         query = "SELECT admin_id, admin_name, admin_uid, admin_clid FROM admin"
         return self.__exec(query)
 
-    def fill_all_missing_disconnected_time(self):
+    def __fill_all_missing_disconnected_time(self):
         query = "UPDATE activity SET activity_endtime = UNIX_TIMESTAMP() WHERE activity_endtime IS NULL"
         return self.__exec(query)
     
