@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import time
 import ts3
 import io
@@ -130,11 +131,13 @@ if __name__ == "__main__":
         logger = Logger()
         print("Logger created")
 
-        sql_cfg = parse_cfg("ts3bot_sql.cfg")
+        dir_path = os.path.dirname(os.path.abspath(__file__))
+
+        sql_cfg = parse_cfg(os.path.join(dir_path, "ts3bot_sql.cfg"))
         sql_manager = SQLManager(sql_cfg[0], sql_cfg[1], sql_cfg[2], sql_cfg[3])
         print("SQL manager created")
 
-        query_cfg = parse_cfg("ts3bot_query.cfg")
+        query_cfg = parse_cfg(os.path.join(dir_path, "ts3bot_query.cfg"))
         print("Bot launched")
         
         host = query_cfg[0]
