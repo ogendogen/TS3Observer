@@ -1,4 +1,5 @@
 import pymysql
+import time
 
 class SQLManager(object):
 
@@ -36,6 +37,13 @@ class SQLManager(object):
     def update_admin_clid(self, admin_id, admin_clid):
         query = "UPDATE admin SET admin_clid = %s WHERE admin_id = %s"
         return self.__exec(query, (admin_clid, admin_id))
+
+    def fix_old_admins(self, clientslist, admins):
+        for client in clientslist.parsed:
+            clientUID = client["client_unique_identifier"]
+            for admin in admins:
+                if admin["admin_uid"] == clientUID:
+                    self.save_admin_login(admin["admin_id"], int(time.time()))
 
     def __exec(self, query, *args):
         db = pymysql.connect(self.__host, self.__user, self.__password, self.__dbname, charset="utf8mb4", cursorclass=pymysql.cursors.DictCursor)

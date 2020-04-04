@@ -90,6 +90,8 @@ def start_bot(sql_manager, group_ids):
     ts3conn.servernotifyregister(event="server")
 
     admins = sql_manager.get_admins()
+    clients = ts3conn.clientlist(uid=True)
+    sql_manager.fix_old_admins(clients, admins)
 
     report_status()
     keep_bot_alive()
