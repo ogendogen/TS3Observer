@@ -104,8 +104,10 @@ def start_bot(sql_manager, group_ids):
                 client_groups = event[0]["client_servergroups"].split(",")
                 uid = event[0]["client_unique_identifier"]
                 clientinfo = f"{str(datetime.now())} Client {name} connected"
-                print(clientinfo)
-                logger.log_info(clientinfo)
+
+                if name != "Unknown":
+                    print(clientinfo)
+                    logger.log_info(clientinfo)
 
                 if len(intersection(group_ids, client_groups)) > 0: # If user is in any admin group
                     admin_id = [admin["admin_id"] for admin in admins if admin["admin_name"] == name] # Try to get admin id from admins
