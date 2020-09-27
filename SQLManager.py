@@ -45,18 +45,22 @@ class SQLManager(object):
                 if admin["admin_uid"] == clientUID:
                     self.save_admin_login(admin["admin_id"], int(time.time()))
 
-    def add_new_player(self, player_name):
-        query = "INSERT INTO players SET player_name = %s, player_entered = UNIX_TIMESTAMP()"
-        return self.__exec(query, (player_name))
+    def add_new_player(self, player_clid, player_name):
+        try:
+            query = "INSERT INTO players SET player_clid = %s, player_name = %s, player_entered = UNIX_TIMESTAMP()"
+            return self.__exec(query, (player_clid, player_name))
+        except Exception:
+            query = "UPDATE players SET player_entered = UNIX_TIMESTAMP(), player_clid = %s WHERE player_name = %s"
+            return self.__exec(query, (player_clid, player_name))
 
-    def remove_player(self, player_name):
-        query = "DELETE FROM players WHERE player_name = %s"
-        return self.__exec(query, (player_name))
+    def remove_player(self, player_clid):
+        query = "DELETE FROM players WHERE player_clid = %s"
+        return self.__exec(query, (player_clid))
 
-    def insert_players(self, players_names):
-        for player in players_names:
-            query = "INSERT INTO players (player_id, player_name, player_entered) VALUES (null, %s, UNIX_TIMESTAMP())"
-            self.__exec(query, (player))
+    def insert_players(self, players):
+        for player_clid, player_name in players.items():
+            query = "INSERT INTO players (player_id, player_clid, player_name, player_entered) VALUES (null, %s, %s, UNIX_TIMESTAMP())"
+            self.__exec(query, (player_clid, player_name))
         return True
 
     def remove_players(self):

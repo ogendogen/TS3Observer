@@ -101,7 +101,7 @@ def start_bot(sql_manager, group_ids):
     clients = ts3conn.clientlist(uid=True)
     sql_manager.fix_old_admins(clients, admins)
 
-    players = prepare_players(clients)
+    prepare_players(clients)
 
     report_status()
     keep_bot_alive()
@@ -134,10 +134,8 @@ def start_bot(sql_manager, group_ids):
                     sql_manager.save_admin_login(admin_id, int(time.time()))
 
                 # Save any player entered to server event
-                sql_manager.add_new_player(name)
-                if clid in players:
-                    logger.log_warning("Player %s (clid %s)already in collection! Replacing with new" % name % clid)
-                players[clid] = name
+                if name != "Unknown":
+                    sql_manager.add_new_player(clid, name)
 
             # Client disconnected
             elif event[0]["reasonid"] == "8":
@@ -147,8 +145,7 @@ def start_bot(sql_manager, group_ids):
                     sql_manager.save_admin_logout(admin_id, int(time.time()))
                 
                 # Remove any player leaving server
-                sql_manager.remove_player()
-                players.pop(clid)
+                sql_manager.remove_player(clid)
 
 if __name__ == "__main__":
     try:
