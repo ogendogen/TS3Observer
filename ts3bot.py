@@ -73,6 +73,13 @@ def update_admin_clid(admins, admin_id, clid):
             break
     return admins
 
+def prepare_players(clients):
+    sql_manager.remove_players()
+    players = list()
+    for client in clients:
+        players.insert(0, client["client_nickname"])
+    return sql_manager.insert_players(players)
+
 def start_bot(sql_manager, group_ids):
     global ts3conn
     global host
@@ -92,6 +99,8 @@ def start_bot(sql_manager, group_ids):
     admins = sql_manager.get_admins()
     clients = ts3conn.clientlist(uid=True)
     sql_manager.fix_old_admins(clients, admins)
+
+    players = prepare_players(clients)
 
     report_status()
     keep_bot_alive()
