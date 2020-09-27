@@ -45,9 +45,9 @@ class SQLManager(object):
                 if admin["admin_uid"] == clientUID:
                     self.save_admin_login(admin["admin_id"], int(time.time()))
 
-    def add_new_player(self, player_name, timestamp):
-        query = "INSERT INTO players SET player_name = %s, player_entered = %s"
-        return self.__exec(query, (player_name, timestamp))
+    def add_new_player(self, player_name):
+        query = "INSERT INTO players SET player_name = %s, player_entered = UNIX_TIMESTAMP()"
+        return self.__exec(query, (player_name))
 
     def remove_player(self, player_id):
         query = "DELETE FROM players WHERE player_id = %s"
