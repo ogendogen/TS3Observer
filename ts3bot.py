@@ -101,6 +101,7 @@ def start_bot(sql_manager, group_ids):
     clients = ts3conn.clientlist(uid=True)
     sql_manager.fix_old_admins(clients, admins)
 
+    # todo: match players on server with players in db on restart
     prepare_players(clients)
 
     report_status()
