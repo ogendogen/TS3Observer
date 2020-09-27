@@ -45,6 +45,26 @@ class SQLManager(object):
                 if admin["admin_uid"] == clientUID:
                     self.save_admin_login(admin["admin_id"], int(time.time()))
 
+    def add_new_player(self, player_name, timestamp):
+        query = "INSERT INTO players SET player_name = %s, player_entered = %s"
+        return self.__exec(query, (player_name, timestamp))
+
+    def remove_player(self, player_id):
+        query = "DELETE FROM players WHERE player_id = %s"
+        return self.__exec(query, (player_id))
+
+    def insert_players(self, players_names):
+        players = dict()
+        for player in players_names:
+            query = "INSERT INTO players (player_id, player_name, player_entered) VALUES (null, %s, UNIX_TIMESTAMP())"
+            player_id = self.__exec(query, (player))
+            players[player_id] = player
+        return players
+
+    def remove_players(self):
+        query = "TRUNCATE TABLE players"
+        return self.__exec(query)
+
     def __exec(self, query, *args):
         db = pymysql.connect(self.__host, self.__user, self.__password, self.__dbname, charset="utf8mb4", cursorclass=pymysql.cursors.DictCursor)
         db.ping(reconnect=True)
