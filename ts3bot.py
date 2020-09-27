@@ -75,10 +75,11 @@ def update_admin_clid(admins, admin_id, clid):
 
 def prepare_players(clients):
     sql_manager.remove_players()
-    players = list()
+    players = dict()
     for client in clients:
-        players.insert(0, client["client_nickname"])
-    return sql_manager.insert_players(players)
+        players[client["clid"]] = client["client_nickname"]
+    sql_manager.insert_players(players)
+    return players
 
 def start_bot(sql_manager, group_ids):
     global ts3conn
@@ -132,12 +133,22 @@ def start_bot(sql_manager, group_ids):
 
                     sql_manager.save_admin_login(admin_id, int(time.time()))
 
+                # Save any player entered to server event
+                sql_manager.add_new_player(name)
+                if clid in players:
+                    logger.log_warning("Player %s (clid %s)already in collection! Replacing with new" % name % clid)
+                players[clid] = name
+
             # Client disconnected
             elif event[0]["reasonid"] == "8":
                 clid = int(event[0]["clid"])
                 admin_id = [admin["admin_id"] for admin in admins if admin["admin_clid"] == clid] # Check if it's admin
                 if len(admin_id) > 0: # If admin then save
                     sql_manager.save_admin_logout(admin_id, int(time.time()))
+                
+                # Remove any player leaving server
+                sql_manager.remove_player()
+                players.pop(clid)
 
 if __name__ == "__main__":
     try:
