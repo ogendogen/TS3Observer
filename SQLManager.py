@@ -1,4 +1,5 @@
 import pymysql
+import time
 
 class SQLManager(object):
 
@@ -7,7 +8,7 @@ class SQLManager(object):
         self.__user = user
         self.__password = password
         self.__dbname = dbname
-        self.fill_all_missing_disconnected_time()
+        self.__fill_all_missing_disconnected_time()
 
     def add_new_admin(self, admin_name, admin_uid, admin_clid):
         query = "INSERT INTO admin SET admin_name = %s, admin_uid = %s, admin_clid = %s"
@@ -29,13 +30,20 @@ class SQLManager(object):
         query = "SELECT admin_id, admin_name, admin_uid, admin_clid FROM admin"
         return self.__exec(query)
 
-    def fill_all_missing_disconnected_time(self):
+    def __fill_all_missing_disconnected_time(self):
         query = "UPDATE activity SET activity_endtime = UNIX_TIMESTAMP() WHERE activity_endtime IS NULL"
         return self.__exec(query)
     
     def update_admin_clid(self, admin_id, admin_clid):
         query = "UPDATE admin SET admin_clid = %s WHERE admin_id = %s"
         return self.__exec(query, (admin_clid, admin_id))
+
+    def fix_old_admins(self, clientslist, admins):
+        for client in clientslist.parsed:
+            clientUID = client["client_unique_identifier"]
+            for admin in admins:
+                if admin["admin_uid"] == clientUID:
+                    self.save_admin_login(admin["admin_id"], int(time.time()))
 
     def __exec(self, query, *args):
         db = pymysql.connect(self.__host, self.__user, self.__password, self.__dbname, charset="utf8mb4", cursorclass=pymysql.cursors.DictCursor)
