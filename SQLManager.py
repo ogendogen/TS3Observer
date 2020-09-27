@@ -49,17 +49,15 @@ class SQLManager(object):
         query = "INSERT INTO players SET player_name = %s, player_entered = UNIX_TIMESTAMP()"
         return self.__exec(query, (player_name))
 
-    def remove_player(self, player_id):
-        query = "DELETE FROM players WHERE player_id = %s"
-        return self.__exec(query, (player_id))
+    def remove_player(self, player_name):
+        query = "DELETE FROM players WHERE player_name = %s"
+        return self.__exec(query, (player_name))
 
     def insert_players(self, players_names):
-        players = dict()
         for player in players_names:
             query = "INSERT INTO players (player_id, player_name, player_entered) VALUES (null, %s, UNIX_TIMESTAMP())"
-            player_id = self.__exec(query, (player))
-            players[player_id] = player
-        return players
+            self.__exec(query, (player))
+        return True
 
     def remove_players(self):
         query = "TRUNCATE TABLE players"
