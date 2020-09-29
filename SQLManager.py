@@ -46,12 +46,8 @@ class SQLManager(object):
                     self.save_admin_login(admin["admin_id"], int(time.time()))
 
     def add_new_player(self, player_clid, player_name):
-        try:
-            query = "INSERT INTO players SET player_clid = %s, player_name = %s, player_entered = UNIX_TIMESTAMP()"
-            return self.__exec(query, (player_clid, player_name))
-        except Exception:
-            query = "UPDATE players SET player_entered = UNIX_TIMESTAMP(), player_clid = %s WHERE player_name = %s"
-            return self.__exec(query, (player_clid, player_name))
+        query = "INSERT INTO players SET player_clid = %s, player_name = %s, player_entered = UNIX_TIMESTAMP() ON DUPLICATE KEY UPDATE player_clid = %s, player_entered = UNIX_TIMESTAMP()"
+        return self.__exec(query, (player_clid, player_name, player_clid))
 
     def remove_player(self, player_clid):
         query = "DELETE FROM players WHERE player_clid = %s"
