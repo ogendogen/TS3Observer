@@ -1,4 +1,6 @@
 import logging
+import os
+import sys
 from logging.handlers import TimedRotatingFileHandler
 
 class Logger(object):
@@ -23,12 +25,20 @@ class Logger(object):
         
         formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
 
+        if not os.path.isdir("ts3logs"):
+            os.mkdir("ts3logs")
+
         handler = TimedRotatingFileHandler("ts3logs/logs_", when="midnight", interval=1)
         handler.suffix = "%Y%m%d.log"
         handler.setFormatter(formatter)
 
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setLevel(logging.INFO)
+
         logger = logging.getLogger("info_logger")
-        logger.setLevel(logging.WARNING)
+        logger.setLevel(logging.INFO)
+
+        logger.addHandler(console_handler)
         logger.addHandler(handler)
 
         return logger
@@ -36,6 +46,9 @@ class Logger(object):
     def __create_error_logger(self):
         
         formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
+
+        if not os.path.isdir("ts3logs"):
+            os.mkdir("ts3logs")
 
         handler = TimedRotatingFileHandler("ts3logs/errorlogs_", when="midnight", interval=1)
         handler.suffix = "%Y%m%d.log"
