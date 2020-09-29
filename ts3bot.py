@@ -110,43 +110,45 @@ def start_bot(sql_manager, group_ids):
     while True:
             event = ts3conn.wait_for_event()
 
-            # Client connected
-            if event[0]["reasonid"] == "0":
-                name = event[0]["client_nickname"]
-                clid = int(event[0]["clid"])
-                client_groups = event[0]["client_servergroups"].split(",")
-                uid = event[0]["client_unique_identifier"]
-                clientinfo = f"{str(datetime.now())} Client {name} connected"
+            # Check if correct event
+            if "reasonid" in event[0]:
+                # Client connected
+                if event[0]["reasonid"] == "0":
+                    name = event[0]["client_nickname"]
+                    clid = int(event[0]["clid"])
+                    client_groups = event[0]["client_servergroups"].split(",")
+                    uid = event[0]["client_unique_identifier"]
+                    clientinfo = f"{str(datetime.now())} Client {name} connected"
 
-                if name != "Unknown":
-                    print(clientinfo)
-                    logger.log_info(clientinfo)
+                    if name != "Unknown":
+                        print(clientinfo)
+                        logger.log_info(clientinfo)
 
-                if len(intersection(group_ids, client_groups)) > 0: # If user is in any admin group
-                    admin_id = [admin["admin_id"] for admin in admins if admin["admin_name"] == name] # Try to get admin id from admins
-                    if len(admin_id) == 0: # Admin not registered
-                        admin_id = sql_manager.add_new_admin(name, uid, clid) # Register new admin
-                        admins.append({"admin_id": admin_id, "admin_name": name, "admin_uid": uid, "admin_clid": clid})
-                    else:
-                        admin_id = admin_id[0] # Admin already registered
-                        admins = update_admin_clid(admins, admin_id, clid)
-                        sql_manager.update_admin_clid(admin_id, clid)
+                    if len(intersection(group_ids, client_groups)) > 0: # If user is in any admin group
+                        admin_id = [admin["admin_id"] for admin in admins if admin["admin_name"] == name] # Try to get admin id from admins
+                        if len(admin_id) == 0: # Admin not registered
+                            admin_id = sql_manager.add_new_admin(name, uid, clid) # Register new admin
+                            admins.append({"admin_id": admin_id, "admin_name": name, "admin_uid": uid, "admin_clid": clid})
+                        else:
+                            admin_id = admin_id[0] # Admin already registered
+                            admins = update_admin_clid(admins, admin_id, clid)
+                            sql_manager.update_admin_clid(admin_id, clid)
 
-                    sql_manager.save_admin_login(admin_id, int(time.time()))
+                        sql_manager.save_admin_login(admin_id, int(time.time()))
 
-                # Save any player entered to server event
-                if name != "Unknown":
-                    sql_manager.add_new_player(clid, name)
+                    # Save any player entered to server event
+                    if name != "Unknown":
+                        sql_manager.add_new_player(clid, name)
 
-            # Client disconnected
-            elif event[0]["reasonid"] == "8":
-                clid = int(event[0]["clid"])
-                admin_id = [admin["admin_id"] for admin in admins if admin["admin_clid"] == clid] # Check if it's admin
-                if len(admin_id) > 0: # If admin then save
-                    sql_manager.save_admin_logout(admin_id, int(time.time()))
-                
-                # Remove any player leaving server
-                sql_manager.remove_player(clid)
+                # Client disconnected
+                elif event[0]["reasonid"] == "8":
+                    clid = int(event[0]["clid"])
+                    admin_id = [admin["admin_id"] for admin in admins if admin["admin_clid"] == clid] # Check if it's admin
+                    if len(admin_id) > 0: # If admin then save
+                        sql_manager.save_admin_logout(admin_id, int(time.time()))
+                    
+                    # Remove any player leaving server
+                    sql_manager.remove_player(clid)
 
 if __name__ == "__main__":
     try:
