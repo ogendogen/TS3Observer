@@ -23,8 +23,8 @@ class Logger(object):
         
         formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
 
-        handler = TimedRotatingFileHandler("logs.log", when="midnight", interval=1)
-        handler.suffix = "%Y%m%d"
+        handler = TimedRotatingFileHandler("ts3logs/logs_", when="midnight", interval=1)
+        handler.suffix = "%Y%m%d.log"
         handler.setFormatter(formatter)
 
         logger = logging.getLogger("info_logger")
@@ -37,8 +37,8 @@ class Logger(object):
         
         formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
 
-        handler = TimedRotatingFileHandler("errorlogs.log", when="midnight", interval=1)
-        handler.suffix = "%Y%m%d"
+        handler = TimedRotatingFileHandler("ts3logs/errorlogs_", when="midnight", interval=1)
+        handler.suffix = "%Y%m%d.log"
         handler.setFormatter(formatter)
 
         logger = logging.getLogger("error_logger")
