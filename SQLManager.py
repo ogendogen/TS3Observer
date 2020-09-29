@@ -11,8 +11,8 @@ class SQLManager(object):
         self.__fill_all_missing_disconnected_time()
 
     def add_new_admin(self, admin_name, admin_uid, admin_clid):
-        query = "INSERT INTO admin SET admin_name = %s, admin_uid = %s, admin_clid = %s"
-        return self.__exec(query, (admin_name, admin_uid, admin_clid))
+        query = "INSERT INTO admin SET admin_name = %s, admin_uid = %s, admin_clid = %s ON DUPLICATE KEY UPDATE admin_name = %s, admin_uid = %s, admin_clid = %s"
+        return self.__exec(query, (admin_name, admin_uid, admin_clid, admin_name, admin_uid, admin_clid))
 
     def save_admin_login(self, admin_id, timestamp):
         query = "INSERT INTO activity SET activity_adminid = %s, activity_starttime = %s"
