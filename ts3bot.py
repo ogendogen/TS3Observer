@@ -44,7 +44,7 @@ def report_status():
         logger.log_info("Activity reported to database")
         threading.Timer(300.0, report_status).start()
     except Exception as e:
-        print("Exception in report_status occured")
+        logger.log_info("Exception in report_status occured")
         logger.log_critical(str(e) + traceback.format_exc())
         killSelf()
 
@@ -62,7 +62,7 @@ def keep_bot_alive():
         ts3conn.send_keepalive()
         threading.Timer(60.0, keep_bot_alive).start()
     except Exception as e:
-        print("Exception in keep_bot_alive occured")
+        logger.log_info("Exception in keep_bot_alive occured")
         logger.log_critical(str(e) + " " + traceback.format_exc())
         killSelf()
 
@@ -121,7 +121,6 @@ def start_bot(sql_manager, group_ids):
                     clientinfo = f"{str(datetime.now())} Client {name} connected"
 
                     if name != "Unknown":
-                        print(clientinfo)
                         logger.log_info(clientinfo)
 
                     if len(intersection(group_ids, client_groups)) > 0: # If user is in any admin group
@@ -153,16 +152,16 @@ def start_bot(sql_manager, group_ids):
 if __name__ == "__main__":
     try:
         logger = Logger()
-        print("Logger created")
+        logger.log_info("Logger created")
 
         dir_path = os.path.dirname(os.path.abspath(__file__))
 
         sql_cfg = parse_cfg(os.path.join(dir_path, "ts3bot_sql.cfg"))
         sql_manager = SQLManager(sql_cfg[0], sql_cfg[1], sql_cfg[2], sql_cfg[3])
-        print("SQL manager created")
+        logger.log_info("SQL manager created")
 
         query_cfg = parse_cfg(os.path.join(dir_path, "ts3bot_query.cfg"))
-        print("Bot launched")
+        logger.log_info("Bot launched")
         
         host = query_cfg[0]
         login = query_cfg[1]
@@ -172,6 +171,6 @@ if __name__ == "__main__":
         start_bot(sql_manager, query_cfg[4])
 
     except Exception as e:
-        print("Exception occured. Stopping " + str(e))
+        logger.log_info("Exception occured. Stopping " + str(e))
         logger.log_critical(str(e) + " " + traceback.format_exc())
         killSelf()
