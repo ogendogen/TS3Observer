@@ -4,3 +4,4 @@ __pycache__
 logs.txt
 logs.log*
 errorlogs.log*
+ts3logs

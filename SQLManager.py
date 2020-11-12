@@ -11,8 +11,8 @@ class SQLManager(object):
         self.__fill_all_missing_disconnected_time()
 
     def add_new_admin(self, admin_name, admin_uid, admin_clid):
-        query = "INSERT INTO admin SET admin_name = %s, admin_uid = %s, admin_clid = %s"
-        return self.__exec(query, (admin_name, admin_uid, admin_clid))
+        query = "INSERT INTO admin SET admin_name = %s, admin_uid = %s, admin_clid = %s ON DUPLICATE KEY UPDATE admin_name = %s, admin_uid = %s, admin_clid = %s"
+        return self.__exec(query, (admin_name, admin_uid, admin_clid, admin_name, admin_uid, admin_clid))
 
     def save_admin_login(self, admin_id, timestamp):
         query = "INSERT INTO activity SET activity_adminid = %s, activity_starttime = %s"
@@ -44,6 +44,24 @@ class SQLManager(object):
             for admin in admins:
                 if admin["admin_uid"] == clientUID:
                     self.save_admin_login(admin["admin_id"], int(time.time()))
+
+    def add_new_player(self, player_clid, player_name):
+        query = "INSERT INTO players SET player_clid = %s, player_name = %s, player_entered = UNIX_TIMESTAMP() ON DUPLICATE KEY UPDATE player_clid = %s, player_entered = UNIX_TIMESTAMP()"
+        return self.__exec(query, (player_clid, player_name, player_clid))
+
+    def remove_player(self, player_clid):
+        query = "DELETE FROM players WHERE player_clid = %s"
+        return self.__exec(query, (player_clid))
+
+    def insert_players(self, players):
+        for player_clid, player_name in players.items():
+            query = "INSERT INTO players (player_id, player_clid, player_name, player_entered) VALUES (null, %s, %s, UNIX_TIMESTAMP())"
+            self.__exec(query, (player_clid, player_name))
+        return True
+
+    def remove_players(self):
+        query = "TRUNCATE TABLE players"
+        return self.__exec(query)
 
     def __exec(self, query, *args):
         db = pymysql.connect(self.__host, self.__user, self.__password, self.__dbname, charset="utf8mb4", cursorclass=pymysql.cursors.DictCursor)
