@@ -177,7 +177,7 @@ if __name__ == "__main__":
         dir_path = os.path.dirname(os.path.abspath(__file__))
 
         sql_cfg = parse_cfg(os.path.join(dir_path, "ts3bot_sql.cfg"))
-        sql_manager = SQLManager("localhost", "root", "", "ts3")
+        sql_manager = SQLManager(sql_cfg[0], sql_cfg[1], sql_cfg[2], sql_cfg[3])
         logger.log_info("SQL manager created")
 
         query_cfg = parse_cfg(os.path.join(dir_path, "ts3bot_query.cfg"))
