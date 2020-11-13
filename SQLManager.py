@@ -54,9 +54,9 @@ class SQLManager(object):
         return self.__exec(query, (player_clid))
 
     def insert_players(self, players):
-        for player_clid, player_name in players.values():
+        for player in players:
             query = "INSERT INTO players (player_id, player_clid, player_name, player_entered) VALUES (null, %s, %s, UNIX_TIMESTAMP())"
-            self.__exec(query, (player_clid, player_name))
+            self.__exec(query, (player[0], player[1]))
         return True
 
     def remove_all_players(self):
