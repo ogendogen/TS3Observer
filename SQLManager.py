@@ -64,9 +64,12 @@ class SQLManager(object):
         return self.__exec(query)
 
     def remove_players(self, players):
-        str_players = str(players).replace('[', '(').replace(']', ')')
-        query = "DELETE FROM players WHERE player_name IN %s"
-        return self.__exec(query, (str_players))
+        players = ["'"+n[1]+"'" for n in players]
+        str_players = '(' + ','.join(players) + ')'
+        
+        # I'm aware it may be unsafe, but that's only way it works
+        query = "DELETE FROM players WHERE player_name IN " + str_players
+        return self.__exec(query)
 
     def get_players(self):
         query = "SELECT player_clid, player_name FROM players"
