@@ -64,6 +64,9 @@ class SQLManager(object):
         return self.__exec(query)
 
     def remove_players(self, players):
+        if players is None or len(players) == 0:
+            return False
+
         players = ["'"+pymysql.escape_string(n[1])+"'" for n in players]
         str_players = '(' + ','.join(players) + ')'
         
