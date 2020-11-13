@@ -74,27 +74,28 @@ def update_admin_clid(admins, admin_id, clid):
     return admins
 
 def prepare_players(clients, db_clients):
-    # Transform dicts into simple sets
-    final_clients = set()
-    final_db_clients = set()
+    # Transform raw data into dicts
+    final_clients = dict()
+    final_db_clients = dict()
     for client in clients:
-        final_clients.add(client["client_nickname"])
+        final_clients[client["clid"]] = client["client_nickname"]
     for db_client in db_clients:
-        final_db_clients.add(db_client["player_name"])
+        final_db_clients[db_client["player_clid"]] = db_client["player_name"]
 
     # Make set difference
-    player_to_add = final_clients.difference(final_db_clients)
-    player_to_remove = final_db_clients.difference(final_clients)
+    player_to_add = list()
+    for client_clid, client_nickname in final_clients.items():
+        if client_nickname not in set(final_db_clients.values()):
+            player_to_add.append([client_clid, client_nickname])
+
+    player_to_remove = list()
+    for client_clid, client_nickname in final_db_clients.items():
+        if client_nickname not in set(final_clients.values()):
+            player_to_remove.append([client_clid, client_nickname])
 
     # Execute SQL
-    sql_manager.insert_players(list(player_to_add))
-    sql_manager.remove_players(list(player_to_remove))
-    # sql_manager.remove_players()
-    # players = dict()
-    # for client in clients:
-    #     players[client["clid"]] = client["client_nickname"]
-    # sql_manager.insert_players(players)
-    # return players
+    sql_manager.insert_players(player_to_add)
+    sql_manager.remove_players(player_to_remove)
 
 def start_bot(sql_manager, group_ids):
     global ts3conn

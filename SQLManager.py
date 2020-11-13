@@ -54,7 +54,7 @@ class SQLManager(object):
         return self.__exec(query, (player_clid))
 
     def insert_players(self, players):
-        for player_clid, player_name in players.items():
+        for player_clid, player_name in players.values():
             query = "INSERT INTO players (player_id, player_clid, player_name, player_entered) VALUES (null, %s, %s, UNIX_TIMESTAMP())"
             self.__exec(query, (player_clid, player_name))
         return True
@@ -69,7 +69,7 @@ class SQLManager(object):
         return self.__exec(query, (str_players))
 
     def get_players(self):
-        query = "SELECT player_name FROM players"
+        query = "SELECT player_clid, player_name FROM players"
         return self.__exec(query)
 
     def __exec(self, query, *args):
