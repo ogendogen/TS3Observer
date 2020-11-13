@@ -59,8 +59,17 @@ class SQLManager(object):
             self.__exec(query, (player_clid, player_name))
         return True
 
-    def remove_players(self):
+    def remove_all_players(self):
         query = "TRUNCATE TABLE players"
+        return self.__exec(query)
+
+    def remove_players(self, players):
+        str_players = str(players).replace('[', '(').replace(']', ')')
+        query = "DELETE FROM players WHERE player_name IN %s"
+        return self.__exec(query, (str_players))
+
+    def get_players(self):
+        query = "SELECT player_name FROM players"
         return self.__exec(query)
 
     def __exec(self, query, *args):
