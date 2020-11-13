@@ -93,9 +93,20 @@ def prepare_players(clients, db_clients):
         if client_nickname not in set(final_clients.values()):
             player_to_remove.append([client_clid, client_nickname])
 
+    print(final_clients)
+    print("=====")
+    print(final_db_clients)
+    print("=====")
+    print(player_to_add)
+    print("=====")
+    print(player_to_remove)
+
     # Execute SQL
     sql_manager.insert_players(player_to_add)
     sql_manager.remove_players(player_to_remove)
+
+    # Log info
+    logger.log_info("Players prepared on boot")
 
 def start_bot(sql_manager, group_ids):
     global ts3conn
