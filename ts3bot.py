@@ -73,13 +73,28 @@ def update_admin_clid(admins, admin_id, clid):
             break
     return admins
 
-def prepare_players(clients):
-    sql_manager.remove_players()
-    players = dict()
+def prepare_players(clients, db_clients):
+    # Transform dicts into simple sets
+    final_clients = set()
+    final_db_clients = set()
     for client in clients:
-        players[client["clid"]] = client["client_nickname"]
-    sql_manager.insert_players(players)
-    return players
+        final_clients.add(client["client_nickname"])
+    for db_client in db_clients:
+        final_db_clients.add(db_client["player_name"])
+
+    # Make set difference
+    player_to_add = final_clients.difference(final_db_clients)
+    player_to_remove = final_db_clients.difference(final_clients)
+
+    # Execute SQL
+    sql_manager.insert_players(list(player_to_add))
+    sql_manager.remove_players(list(player_to_remove))
+    # sql_manager.remove_players()
+    # players = dict()
+    # for client in clients:
+    #     players[client["clid"]] = client["client_nickname"]
+    # sql_manager.insert_players(players)
+    # return players
 
 def start_bot(sql_manager, group_ids):
     global ts3conn
@@ -102,7 +117,8 @@ def start_bot(sql_manager, group_ids):
     sql_manager.fix_old_admins(clients, admins)
 
     # todo: match players on server with players in db on restart
-    prepare_players(clients)
+    dbClients = sql_manager.get_players()
+    prepare_players(clients, dbClients)
 
     report_status()
     keep_bot_alive()
@@ -157,7 +173,7 @@ if __name__ == "__main__":
         dir_path = os.path.dirname(os.path.abspath(__file__))
 
         sql_cfg = parse_cfg(os.path.join(dir_path, "ts3bot_sql.cfg"))
-        sql_manager = SQLManager(sql_cfg[0], sql_cfg[1], sql_cfg[2], sql_cfg[3])
+        sql_manager = SQLManager("localhost", "root", "", "ts3")
         logger.log_info("SQL manager created")
 
         query_cfg = parse_cfg(os.path.join(dir_path, "ts3bot_query.cfg"))
