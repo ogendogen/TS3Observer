@@ -56,7 +56,7 @@ class SQLManager(object):
     def insert_players(self, players):
         for player in players:
             query = "INSERT INTO players (player_id, player_clid, player_name, player_entered) VALUES (null, %s, %s, UNIX_TIMESTAMP()) ON DUPLICATE UPDATE player_name = %s"
-            self.__exec(query, (player[0], player[1]))
+            self.__exec(query, (player[0], player[1], player[1]))
         return True
 
     def remove_all_players(self):
