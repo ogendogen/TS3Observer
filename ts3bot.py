@@ -156,7 +156,7 @@ def start_bot(sql_manager, group_ids):
                         sql_manager.save_admin_login(admin_id, int(time.time()))
 
                     # Save any player entered to server event
-                    if name != "Unknown":
+                    if name != "Unknown" and name != "KILLER":
                         sql_manager.add_new_player(clid, name)
 
                 # Client disconnected
