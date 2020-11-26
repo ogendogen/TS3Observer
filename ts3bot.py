@@ -100,6 +100,10 @@ def prepare_players(clients, db_clients):
     # Log info
     logger.log_info("Players prepared on boot")
 
+def is_player_valid(name):
+    blocked = ["KILLER", "CSKatowice BOT", "Unknown", "serveradmin", "GameTracker", "TS3index.com #242738"]
+    return name not in blocked
+
 def start_bot(sql_manager, group_ids):
     global ts3conn
     global host
@@ -135,13 +139,14 @@ def start_bot(sql_manager, group_ids):
                 # Client connected
                 if event[0]["reasonid"] == "0":
                     name = event[0]["client_nickname"]
+
+                    if not is_player_valid(name):
+                        continue
+                    
                     clid = int(event[0]["clid"])
                     client_groups = event[0]["client_servergroups"].split(",")
                     uid = event[0]["client_unique_identifier"]
-                    clientinfo = f"{str(datetime.now())} Client {name} connected"
-
-                    if name != "Unknown":
-                        logger.log_info(clientinfo)
+                    logger.log_info(f"Client {name} connected")
 
                     if len(intersection(group_ids, client_groups)) > 0: # If user is in any admin group
                         admin_id = [admin["admin_id"] for admin in admins if admin["admin_name"] == name] # Try to get admin id from admins
