@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 from logging.handlers import TimedRotatingFileHandler
+from datetime import datetime
 
 class Logger(object):
 
@@ -10,16 +11,16 @@ class Logger(object):
         self.__error_logger = self.__create_error_logger()
 
     def log_info(self, message):
-        self.__info_logger.info(message)
+        self.__info_logger.info(str(datetime.now()) + " " + message)
 
     def log_warning(self, message):
-        self.__info_logger.warning(message)
+        self.__info_logger.warning(str(datetime.now()) + " " + message)
 
     def log_error(self, message):
-        self.__error_logger.error(message)
+        self.__error_logger.error(str(datetime.now()) + " " + message)
 
     def log_critical(self, message):
-        self.__error_logger.critical(message)
+        self.__error_logger.critical(str(datetime.now()) + " " + message)
 
     def __create_info_logger(self):
         
